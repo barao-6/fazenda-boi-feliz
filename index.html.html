@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fazenda Boi Feliz</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f5f4f0;--bg3:#eeecea;
+  --text:#1a1a1a;--text2:#666;--text3:#999;
+  --border:rgba(0,0,0,0.1);--border2:rgba(0,0,0,0.18);
+  --green:#3B6D11;--green-bg:#EAF3DE;--green-text:#27500A;
+  --red:#E24B4A;--red-bg:#FCEBEB;--red-text:#791F1F;
+  --amber:#BA7517;--amber-bg:#FAEEDA;--amber-text:#633806;
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-text:#0C447C;
+  --radius:8px;--radius-lg:12px;
+  --font:'Segoe UI',system-ui,-apple-system,sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;
+  --text:#f2f2f7;--text2:#aeaeb2;--text3:#636366;
+  --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.18);
+  --green-bg:#1a2e0a;--green-text:#97C459;
+  --red-bg:#2e0a0a;--red-text:#F09595;
+  --amber-bg:#2e1f0a;--amber-text:#FAC775;
+  --blue-bg:#0a1e2e;--blue-text:#85B7EB;
+}}
+body{font-family:var(--font);font-size:14px;color:var(--text);background:var(--bg);min-height:100vh}
+#app{max-width:680px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:22px;font-weight:500;margin-bottom:4px}
+.subtitle{font-size:13px;color:var(--text2);margin-bottom:20px}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.m-card{background:var(--bg2);border-radius:var(--radius);padding:10px 12px}
+.m-label{font-size:11px;color:var(--text3);margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+.m-val{font-size:20px;font-weight:500}
+.section{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px;margin-bottom:10px}
+.sec-title{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:12px}
+.cattle-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.animal{border:0.5px solid var(--border);border-radius:var(--radius);padding:8px 6px;cursor:pointer;transition:background .15s;background:var(--bg)}
+.animal:hover{background:var(--bg2)}
+.animal.selected{border-color:var(--blue);background:var(--blue-bg)}
+.animal.sick{border-color:var(--red);background:var(--red-bg)}
+.animal.empty{opacity:.2;pointer-events:none}
+.a-icon{font-size:18px;text-align:center;margin-bottom:4px}
+.a-name{font-size:10px;color:var(--text2);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-wrap{height:3px;background:var(--border);border-radius:2px;margin-top:4px}
+.bar-fill{height:100%;border-radius:2px;transition:width .3s}
+.actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+button{font-family:var(--font);font-size:13px;padding:8px 12px;border:0.5px solid var(--border2);border-radius:var(--radius);background:transparent;color:var(--text);cursor:pointer;transition:background .15s,transform .1s}
+button:hover{background:var(--bg2)}
+button:active{transform:scale(.98)}
+.detail-panel{background:var(--bg2);border-radius:var(--radius);padding:12px;margin-top:10px;font-size:13px}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border)}
+.detail-row:last-child{border-bottom:none}
+.detail-row span:first-child{color:var(--text2)}
+.tag{font-size:10px;padding:2px 7px;border-radius:var(--radius);font-weight:500}
+.tag-ok{background:var(--green-bg);color:var(--green-text)}
+.tag-warn{background:var(--amber-bg);color:var(--amber-text)}
+.tag-err{background:var(--red-bg);color:var(--red-text)}
+.log-box{max-height:90px;overflow-y:auto;font-size:12px;color:var(--text2);line-height:1.9}
+.log-line{border-bottom:0.5px solid var(--border);padding:1px 0}
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.shop-card{border:0.5px solid var(--border);border-radius:var(--radius);padding:10px;background:var(--bg)}
+.shop-card .sc-name{font-weight:500;font-size:13px;margin-bottom:2px}
+.shop-card .sc-sub{font-size:11px;color:var(--text2);margin-bottom:6px}
+.shop-card .sc-price{font-size:12px;color:var(--text3);margin-bottom:6px}
+.upg-item{display:flex;align-items:center;gap:10px;padding:10px;border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:7px;background:var(--bg)}
+.upg-done{opacity:.5}
+.upg-info{flex:1;min-width:0}
+.upg-name{font-weight:500;font-size:13px}
+.upg-sub{font-size:11px;color:var(--text2);margin-top:1px}
+.nav{display:flex;gap:4px;margin-bottom:12px;border-bottom:0.5px solid var(--border);padding-bottom:8px}
+.nav-btn{font-size:12px;padding:5px 12px;border:none;background:transparent;color:var(--text2);cursor:pointer;border-radius:var(--radius)}
+.nav-btn.on{background:var(--bg2);color:var(--text);font-weight:500}
+.season-chip{font-size:11px;padding:3px 9px;border-radius:var(--radius);font-weight:500;background:var(--bg2);color:var(--text2)}
+.weather-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg2);border-radius:var(--radius);margin-bottom:12px;font-size:13px}
+.notif{padding:8px 12px;border-radius:var(--radius);font-size:12px;margin-bottom:8px;display:none}
+.notif.show{display:block}
+.notif-warn{background:var(--amber-bg);color:var(--amber-text)}
+.notif-err{background:var(--red-bg);color:var(--red-text)}
+.notif-ok{background:var(--green-bg);color:var(--green-text)}
+.panel{display:none}
+.panel.on{display:block}
+footer{margin-top:32px;text-align:center;font-size:12px;color:var(--text3)}
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>🐄 Fazenda Boi Feliz</h1>
+  <p class="subtitle">Simulação de pecuária — gerencie seu rebanho com cuidado</p>
+
+  <div class="metrics" id="hud"></div>
+  <div class="weather-row" id="weather-row"></div>
+  <div id="notif" class="notif"></div>
+
+  <div class="nav">
+    <button class="nav-btn on" onclick="showTab('fazenda')">Fazenda</button>
+    <button class="nav-btn" onclick="showTab('loja')">Loja</button>
+    <button class="nav-btn" onclick="showTab('vet')">Veterinário</button>
+    <button class="nav-btn" onclick="showTab('upgrades')">Melhorias</button>
+  </div>
+
+  <div id="tab-fazenda" class="panel on">
+    <div class="section">
+      <div class="sec-title">Rebanho — clique em um animal para selecionar</div>
+      <div class="cattle-grid" id="cattle-grid"></div>
+      <div id="animal-detail"></div>
+      <div class="actions">
+        <button onclick="action('alimentar')">Alimentar</button>
+        <button onclick="action('ordenhar')">Ordenhar</button>
+        <button onclick="action('vender-leite')">Vender leite (R$<span id="milk-price">3</span>/L)</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+        <button onclick="nextDay()" style="flex:1;font-weight:500">Avançar dia →</button>
+        <span style="font-size:12px;color:var(--text3)">Alimentados: <span id="fed-count">0</span>/<span id="total-count">0</span></span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="sec-title">Registro do dia</div>
+      <div class="log-box" id="log-box"></div>
+    </div>
+  </div>
+
+  <div id="tab-loja" class="panel">
+    <div class="section">
+      <div class="sec-title">Comprar animais</div>
+      <div class="shop-grid" id="shop-animals"></div>
+    </div>
+    <div class="section">
+      <div class="sec-title">Insumos</div>
+      <div class="shop-grid" id="shop-items"></div>
+    </div>
+  </div>
+
+  <div id="tab-vet" class="panel">
+    <div class="section">
+      <div class="sec-title">Clínica veterinária</div>
+      <div id="vet-panel"></div>
+    </div>
+  </div>
+
+  <div id="tab-upgrades" class="panel">
+    <div class="section">
+      <div class="sec-title">Infraestrutura da fazenda</div>
+      <div id="upg-list"></div>
+    </div>
+  </div>
+
+  <footer>Fazenda Boi Feliz · Simulação de Pecuária</footer>
+</div>
+
+<script>
+const SEASONS=[{name:'Verão',icon:'☀',desc:'Alta produção. Seca possível.',milkMod:1.1,sickMod:0.8},{name:'Outono',icon:'🍂',desc:'Clima ameno, pasto bom.',milkMod:1.0,sickMod:1.0},{name:'Inverno',icon:'❄',desc:'Frio reduz produção.',milkMod:0.8,sickMod:1.3},{name:'Primavera',icon:'🌿',desc:'Pasto abundante.',milkMod:1.15,sickMod:0.9}];
+const WEATHERS=[{name:'Ensolarado',icon:'☀',milkMod:1.05},{name:'Nublado',icon:'⛅',milkMod:1.0},{name:'Chuvoso',icon:'🌧',milkMod:0.9,sickBonus:0.05},{name:'Seca',icon:'🏜',milkMod:0.75}];
+const BREEDS={nelore:{name:'Nelore',icon:'🐄',milk:7,meat:180,buyCost:160,desc:'Rústica, resistente a doenças'},angus:{name:'Angus',icon:'🐂',milk:0,meat:320,buyCost:220,desc:'Corte premium, alta valorização'},holandesa:{name:'Holandesa',icon:'🐮',milk:15,meat:200,buyCost:340,desc:'Alta produção leiteira'},gir:{name:'Gir Leiteiro',icon:'🐄',milk:10,meat:150,buyCost:280,desc:'Leite de qualidade, adaptável'},touro:{name:'Touro Nelore',icon:'🐃',milk:0,meat:400,buyCost:500,desc:'Melhora genética do rebanho'}};
+const UPGRADES={silo:{name:'Silo de alimentação',sub:'Reduz custo de ração em 40%',cost:350,icon:'🏚',bought:false},tanque:{name:'Tanque de resfriamento',sub:'+25% no preço de venda do leite',cost:480,icon:'🧊',bought:false},cerca:{name:'Cerca elétrica',sub:'Capacidade de 20 animais',cost:400,icon:'⚡',bought:false},curral:{name:'Curral coberto',sub:'Reduz mortalidade invernal',cost:520,icon:'🏠',bought:false},genetica:{name:'Programa genético',sub:'+15% produção permanente',cost:700,icon:'🔬',bought:false}};
+
+let G={money:800,day:1,milkStock:0,cows:[],maxCows:10,selectedIdx:null,season:0,weather:0,log:[],inventory:{vacina:0,racao:0,antibiotico:0}};
+let cowId=0;
+
+function makeCow(k){const b=BREEDS[k];return{id:cowId++,breed:k,name:b.name+' '+(G.cows.length+1),health:100,hunger:100,sick:false,sickDays:0,disease:'',fedToday:false,milkedToday:0,daysOwned:0};}
+function addLog(m){G.log.unshift('[Dia '+G.day+'] '+m);if(G.log.length>60)G.log.pop();}
+function notify(m,t='ok'){const el=document.getElementById('notif');el.textContent=m;el.className='notif show notif-'+t;clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3500);}
+function calcMilkPrice(){return UPGRADES.tanque.bought?4:3;}
+function prodMod(c){let m=SEASONS[G.season].milkMod*WEATHERS[G.weather].milkMod;if(c.sick)m*=0.3;if(!c.fedToday)m*=0.5;if(UPGRADES.genetica.bought)m*=1.15;return m;}
+
+function renderHUD(){
+  document.getElementById('hud').innerHTML=
+  `<div class="m-card"><div class="m-label">Capital</div><div class="m-val">R$${G.money.toLocaleString('pt-BR')}</div></div>`+
+  `<div class="m-card"><div class="m-label">Rebanho</div><div class="m-val">${G.cows.length}/${G.maxCows}</div></div>`+
+  `<div class="m-card"><div class="m-label">Leite</div><div class="m-val">${G.milkStock}L</div></div>`+
+  `<div class="m-card"><div class="m-label">Dia</div><div class="m-val">${G.day}</div></div>`;
+}
+
+function renderWeather(){
+  const s=SEASONS[G.season],w=WEATHERS[G.weather];
+  document.getElementById('weather-row').innerHTML=`<span style="font-size:18px">${w.icon}</span><span style="font-weight:500">${w.name}</span><span style="color:var(--text2)">${s.desc}</span><span class="season-chip" style="margin-left:auto">${s.icon} ${s.name}</span>`;
+}
+
+function renderCattle(){
+  const grid=document.getElementById('cattle-grid');
+  grid.innerHTML='';
+  for(let i=0;i<G.maxCows;i++){
+    const c=G.cows[i];const slot=document.createElement('div');
+    if(!c){slot.className='animal empty';slot.innerHTML='<div class="a-icon" style="opacity:.3">+</div>';grid.appendChild(slot);continue;}
+    slot.className='animal'+(G.selectedIdx===i?' selected':'')+(c.sick?' sick':'');
+    const b=BREEDS[c.breed];
+    const hc=c.health>60?'#3B6D11':c.health>30?'#BA7517':'#E24B4A';
+    const fc=c.hunger>60?'#185FA5':c.hunger>30?'#BA7517':'#E24B4A';
+    slot.innerHTML=`<div class="a-icon">${b.icon}</div><div class="a-name">${c.name}</div><div class="bar-wrap"><div class="bar-fill" style="width:${c.health}%;background:${hc}"></div></div><div class="bar-wrap"><div class="bar-fill" style="width:${c.hunger}%;background:${fc}"></div></div>`;
+    slot.onclick=()=>{G.selectedIdx=G.selectedIdx===i?null:i;renderCattle();}
+    grid.appendChild(slot);
+  }
+  document.getElementById('fed-count').textContent=G.cows.filter(c=>c.fedToday).length;
+  document.getElementById('total-count').textContent=G.cows.length;
+  renderDetail();
+}
+
+function renderDetail(){
+  const el=document.getElementById('animal-detail');
+  if(G.selectedIdx===null||!G.cows[G.selectedIdx]){el.innerHTML='';return;}
+  const c=G.cows[G.selectedIdx],b=BREEDS[c.breed],p=calcMilkPrice();
+  el.innerHTML=`<div class="detail-panel">`+
+  `<div class="detail-row"><span>Nome</span><span style="font-weight:500">${c.name}</span></div>`+
+  `<div class="detail-row"><span>Raça</span><span>${b.name}</span></div>`+
+  `<div class="detail-row"><span>Saúde</span><span class="tag ${c.health>60?'tag-ok':c.health>30?'tag-warn':'tag-err'}">${c.health}%</span></div>`+
+  `<div class="detail-row"><span>Fome</span><span class="tag ${c.hunger>60?'tag-ok':c.hunger>30?'tag-warn':'tag-err'}">${c.hunger}%</span></div>`+
+  `<div class="detail-row"><span>Status</span><span class="tag ${c.sick?'tag-err':'tag-ok'}">${c.sick?'Doente: '+c.disease:'Saudável'}</span></div>`+
+  `<div class="detail-row"><span>Produção/dia</span><span>${b.milk?Math.round(b.milk*prodMod(c))+'L — R$'+Math.round(b.milk*prodMod(c)*p):'—'}</span></div>`+
+  `<div class="detail-row"><span>Dias no rebanho</span><span>${c.daysOwned}</span></div>`+
+  `<div style="display:flex;gap:6px;margin-top:10px">`+
+  (b.milk?`<button onclick="milkOne(${G.selectedIdx})" style="flex:1;font-size:12px">Ordenhar</button>`:'') +
+  `<button onclick="sellAnimal(${G.selectedIdx})" style="flex:1;font-size:12px">Vender — R$${Math.round(b.meat*(c.health/100))}</button>`+
+  `</div></div>`;
+}
+
+function action(type){
+  if(type==='alimentar'){
+    const targets=G.selectedIdx!==null?[G.cows[G.selectedIdx]]:G.cows;
+    const unfed=targets.filter(c=>c&&!c.fedToday&&c.health>0);
+    if(!unfed.length){notify('Todos já foram alimentados hoje.','warn');return;}
+    const cost=(UPGRADES.silo.bought?6:10)*unfed.length;
+    if(G.money<cost){notify('Sem capital. Precisa R$'+cost,'err');return;}
+    G.money-=cost;unfed.forEach(c=>{c.fedToday=true;c.hunger=Math.min(100,c.hunger+40);});
+    addLog('Alimentou '+unfed.length+' animais por R$'+cost+'.');renderAll();
+  }
+  if(type==='ordenhar'){
+    const targets=G.selectedIdx!==null?(G.cows[G.selectedIdx]?[G.cows[G.selectedIdx]]:[]):G.cows;
+    let total=0;
+    targets.forEach(c=>{if(!c||c.health<=0||c.sick||!BREEDS[c.breed].milk)return;const l=Math.round(BREEDS[c.breed].milk*prodMod(c));c.milkedToday=(c.milkedToday||0)+l;G.milkStock+=l;total+=l;});
+    if(!total){notify('Nenhuma vaca disponível.','warn');return;}
+    addLog('Ordenha: +'+total+'L coletados.');notify('+'+total+'L no estoque.','ok');renderAll();
+  }
+  if(type==='vender-leite'){
+    if(!G.milkStock){notify('Estoque vazio.','warn');return;}
+    const val=G.milkStock*calcMilkPrice();G.money+=val;
+    addLog('Vendeu '+G.milkStock+'L por R$'+val+'.');notify('R$'+val+' recebidos.','ok');G.milkStock=0;renderAll();
+  }
+}
+
+function milkOne(i){const c=G.cows[i];if(!c||c.sick||!BREEDS[c.breed].milk){notify('Animal não pode ser ordenhado.','warn');return;}const l=Math.round(BREEDS[c.breed].milk*prodMod(c));c.milkedToday=(c.milkedToday||0)+l;G.milkStock+=l;addLog(c.name+' ordenhada: +'+l+'L.');notify('+'+l+'L','ok');renderAll();}
+function sellAnimal(i){const c=G.cows[i];if(!c)return;const b=BREEDS[c.breed],val=Math.round(b.meat*(c.health/100));G.money+=val;addLog('Vendeu '+c.name+' por R$'+val+'.');notify(c.name+' vendido por R$'+val,'ok');G.cows.splice(i,1);G.selectedIdx=null;renderAll();}
+
+function nextDay(){
+  G.day++;G.season=Math.floor(G.day/25)%4;G.weather=Math.floor(Math.random()*4);
+  const s=SEASONS[G.season],sickBase=0.08*s.sickMod*(UPGRADES.curral.bought&&G.season===2?0.5:1);
+  const diseases=['Mastite','Febre aftosa','Verminose','Pneumonia','Brucelose'];
+  G.cows.forEach(c=>{
+    c.daysOwned++;c.fedToday=false;c.milkedToday=0;
+    c.hunger=Math.max(0,c.hunger-30);
+    if(c.hunger<20)c.health=Math.max(0,c.health-15);
+    if(c.sick){c.sickDays++;c.health=Math.max(0,c.health-10);}
+    else if(Math.random()<sickBase&&c.health>30){c.sick=true;c.disease=diseases[Math.floor(Math.random()*diseases.length)];c.sickDays=0;addLog('ALERTA: '+c.name+' adoeceu! ('+c.disease+')');notify(c.name+' ficou doente!','err');}
+  });
+  G.cows=G.cows.filter(c=>c.health>0);
+  addLog('Dia '+G.day+'. Clima: '+WEATHERS[G.weather].name+'. Estação: '+s.name+'.');
+  document.getElementById('milk-price').textContent=calcMilkPrice();
+  renderAll();
+}
+
+function renderLog(){document.getElementById('log-box').innerHTML=G.log.slice(0,20).map(l=>`<div class="log-line">${l}</div>`).join('');}
+
+function renderShop(){
+  document.getElementById('shop-animals').innerHTML=Object.entries(BREEDS).map(([k,b])=>`<div class="shop-card"><div style="font-size:20px;margin-bottom:4px">${b.icon}</div><div class="sc-name">${b.name}</div><div class="sc-sub">${b.desc}</div><div class="sc-price">${b.milk?'Leite: '+b.milk+'L/dia · ':''}Carne: R$${b.meat}</div><button onclick="buyCow('${k}')" style="width:100%;font-size:12px">Comprar — R$${b.buyCost}</button></div>`).join('');
+  const items=[{key:'vacina',name:'Vacina',sub:'Cura doença imediatamente',price:70,icon:'💉'},{key:'racao',name:'Ração premium',sub:'+20% produção por 3 dias',price:100,icon:'🌾'},{key:'antibiotico',name:'Antibiótico',sub:'Reduz progressão da doença',price:55,icon:'💊'}];
+  document.getElementById('shop-items').innerHTML=items.map(it=>`<div class="shop-card"><div style="font-size:20px;margin-bottom:4px">${it.icon}</div><div class="sc-name">${it.name}</div><div class="sc-sub">${it.sub}</div><div class="sc-price">Estoque: ${G.inventory[it.key]||0}</div><button onclick="buyItem('${it.key}',${it.price})" style="width:100%;font-size:12px">Comprar — R$${it.price}</button></div>`).join('');
+}
+
+function buyCow(breed){const b=BREEDS[breed];if(G.money<b.buyCost){notify('Capital insuficiente. Precisa R$'+b.buyCost,'err');return;}if(G.cows.length>=G.maxCows){notify('Capacidade máxima. Compre a cerca elétrica.','warn');return;}G.money-=b.buyCost;G.cows.push(makeCow(breed));addLog('Comprou '+b.name+' por R$'+b.buyCost+'.');notify(b.name+' adicionado ao rebanho.','ok');renderAll();}
+function buyItem(key,price){if(G.money<price){notify('Capital insuficiente.','err');return;}G.money-=price;G.inventory[key]=(G.inventory[key]||0)+1;addLog('Comprou '+key+' por R$'+price+'.');notify(key+' adquirido.','ok');renderAll();}
+
+function renderVet(){
+  const sick=G.cows.filter(c=>c.sick);
+  let html=sick.length?sick.map(c=>{const idx=G.cows.indexOf(c);return`<div class="upg-item"><span style="font-size:20px">${BREEDS[c.breed].icon}</span><div class="upg-info"><div class="upg-name">${c.name}</div><div class="upg-sub">${c.disease} — ${c.sickDays} dia(s) · Saúde: ${c.health}%</div></div><div style="display:flex;gap:5px"><button onclick="treatAnimal(${idx},'vacina')" style="font-size:11px;padding:5px 8px">Vacina (${G.inventory.vacina||0})</button><button onclick="treatAnimal(${idx},'antibiotico')" style="font-size:11px;padding:5px 8px">Antibiótico (${G.inventory.antibiotico||0})</button></div></div>`;}).join(''):'<div style="color:var(--text2);font-size:13px;padding:8px 0">Nenhum animal doente no momento.</div>';
+  html+=`<div style="margin-top:12px;padding-top:10px;border-top:0.5px solid var(--border)"><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Consulta avulsa</div><button onclick="vetVisit()" style="font-size:12px">Chamar veterinário — R$150 (trata todos)</button></div>`;
+  document.getElementById('vet-panel').innerHTML=html;
+}
+
+function treatAnimal(idx,item){const c=G.cows[idx];if(!c)return;if(!(G.inventory[item]>0)){notify('Sem '+item+' no estoque.','warn');return;}G.inventory[item]--;c.sick=false;c.sickDays=0;c.health=Math.min(100,c.health+25);addLog(c.name+' tratado com '+item+'.');notify(c.name+' curado!','ok');renderAll();}
+function vetVisit(){if(G.money<150){notify('Precisa R$150.','err');return;}G.money-=150;let n=0;G.cows.forEach(c=>{if(c.sick){c.sick=false;c.sickDays=0;c.health=Math.min(100,c.health+30);n++;}});addLog('Veterinário visitou. '+n+' animal(is) tratado(s). Custo R$150.');notify(n?n+' animal(is) curado(s).':'Nenhum doente.','ok');renderAll();}
+
+function renderUpgrades(){document.getElementById('upg-list').innerHTML=Object.entries(UPGRADES).map(([k,u])=>`<div class="upg-item ${u.bought?'upg-done':''}"><span style="font-size:20px">${u.icon}</span><div class="upg-info"><div class="upg-name">${u.name}${u.bought?' — instalado':''}</div><div class="upg-sub">${u.sub}</div></div>${u.bought?'':`<button onclick="buyUpgrade('${k}')" style="font-size:12px;white-space:nowrap">R$${u.cost}</button>`}</div>`).join('');}
+function buyUpgrade(k){const u=UPGRADES[k];if(u.bought)return;if(G.money<u.cost){notify('Capital insuficiente. Precisa R$'+u.cost,'err');return;}G.money-=u.cost;u.bought=true;if(k==='cerca')G.maxCows=20;addLog('Melhoria instalada: '+u.name+' por R$'+u.cost+'.');notify(u.name+' instalado!','ok');renderAll();}
+
+function showTab(id){['fazenda','loja','vet','upgrades'].forEach(t=>{document.getElementById('tab-'+t).classList.toggle('on',t===id);});document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('on',['fazenda','loja','vet','upgrades'][i]===id));if(id==='loja')renderShop();if(id==='vet')renderVet();if(id==='upgrades')renderUpgrades();}
+function renderAll(){renderHUD();renderWeather();renderCattle();renderLog();}
+
+addLog('Fazenda iniciada. Capital: R$800. Compre seu primeiro animal na aba Loja.');
+renderAll();
+</script>
+</body>
+</html>
